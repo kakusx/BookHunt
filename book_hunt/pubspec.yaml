@@ -26,6 +26,7 @@ dependencies:
   cached_network_image: ^2.0.0
   shared_preferences: ^0.5.8
   dio: ^3.0.4
+  fluttertoast: ^7.0.1
 
 dev_dependencies:
   flutter_test:

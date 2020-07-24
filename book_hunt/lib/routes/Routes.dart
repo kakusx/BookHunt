@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:book_hunt/pages/LoginPage.dart';
 import 'package:book_hunt/pages/BookList.dart';
 import 'package:book_hunt/pages/BookPage.dart';
 
 final routes = {
-  '/': (context) => BookListPage(),
+  '/': (context) => LoginPage(),
+  '/login': (context) => LoginPage(),
+  '/bookList': (context) => BookListPage(),
   '/book': (context, {arguments}) => BookPage(arguments: arguments),
 };
 

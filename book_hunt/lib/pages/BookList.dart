@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:book_hunt/services/UtilService.dart';
 import 'package:book_hunt/components/BookItem.dart';
 import 'package:book_hunt/services/HttpService.dart';
 
@@ -29,6 +30,8 @@ class _BookListPageState extends State<BookListPage> with SingleTickerProviderSt
   bool get wantKeepAlive => true;
 
   HttpService http = new HttpService();
+  UtilService util = new UtilService();
+  String token;
 
   static Widget book(o, String tabName) {
     o['tabName'] = tabName;
@@ -172,6 +175,7 @@ class _BookListPageState extends State<BookListPage> with SingleTickerProviderSt
 
   //region _refreshAll
   _refreshAll() async {
+    token = await util.getStorage('token');
     //加载页面数据
     this.tabs.forEach((tab) async {
       await _refresh(index: this.tabs.indexOf(tab));
@@ -182,7 +186,6 @@ class _BookListPageState extends State<BookListPage> with SingleTickerProviderSt
 
   //region 刷新列表
   Future<void> _refresh({bool clear: true, int index}) async {
-    print(index);
     index = index ?? _tabIndex;
     if (clear) {
       _pageIds[index] = 1;
@@ -190,17 +193,17 @@ class _BookListPageState extends State<BookListPage> with SingleTickerProviderSt
     //获取新数据
     Map config = _tabConfig[index];
     String page = _pageIds[index].toString();
-    var queryUrl = config['url'] + page;
+    var queryUrl = config['url'] + page + "/" + token;
     var data = await http.get(queryUrl);
 
     var list = _listArr[index];
     if (!mounted) return;
-    if (data != null) {
+    if (data != null && data['list'].length > 0) {
       setState(() {
         if (clear) {
           list.clear();
         }
-        data.forEach((o) {
+        data['list'].forEach((o) {
           String tabName = tabs[index].key.toString();
           list.add(config['getItem'](o, tabName));
         });
