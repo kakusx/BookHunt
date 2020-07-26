@@ -40,7 +40,7 @@ class HttpService {
         return response.data;
       } else {
         util.showToast(response.data['msg'].toString());
-        return null;
+        return response.data;
       }
     } else {
       util.showToast("连接异常-" + response.statusCode.toString());

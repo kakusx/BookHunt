@@ -195,6 +195,9 @@ class _BookListPageState extends State<BookListPage> with SingleTickerProviderSt
     String page = _pageIds[index].toString();
     var queryUrl = config['url'] + page + "/" + token;
     var data = await http.get(queryUrl);
+    if (data['code'] == -101) {
+      Navigator.popAndPushNamed(context, '/login');
+    }
 
     var list = _listArr[index];
     if (!mounted) return;
