@@ -1,3 +1,4 @@
+import 'package:book_hunt/services/UtilService.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class BookPage extends StatefulWidget {
 class _BookPageState extends State<BookPage> {
   final Map book;
   HttpService http = new HttpService();
+  UtilService util = new UtilService();
 
   _BookPageState({this.book});
 
@@ -66,6 +68,7 @@ class _BookPageState extends State<BookPage> {
           },
         ));
   }
+
   //endregion
 
   //region titleSection
@@ -111,14 +114,18 @@ class _BookPageState extends State<BookPage> {
       ),
     );
   }
+
   //endregion
 
   //region 切换关注状态
-  _toggleFav(Map book) {
+  _toggleFav(Map book) async {
     var isbn = book['isbn'];
     var favInd = book['fav_ind'] == 'Y' ? 'N' : 'Y';
+    String token = await util.getStorage('token');
     book['fav_ind'] = favInd;
-    http.post('book/update', {'isbn': isbn, 'fav_ind': favInd});
+    var data = await http.post('book/update/' + token, {'isbn': isbn, 'fav_ind': favInd, 'token': token});
+    util.toastResult(data);
+    print(data);
   }
 //endregion
 }

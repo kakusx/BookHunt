@@ -89,7 +89,6 @@ class _BookItemState extends State<BookItem> {
 
   List<Widget> bookIcons(){
     List<Widget> icons = [];
-    print(book['tabName']);
     if(book['tabName'] == "[<'Favourite'>]"){
       if(book['active_ind'] =='Y'){
         icons.add(Icon(Icons.check_circle_outline, size: 15, color: Colors.green, ));

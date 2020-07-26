@@ -15,6 +15,16 @@ class UtilService {
         fontSize: 16.0);
   }
 
+  void toastResult(Map data){
+    if(data != null){
+      if(data['code'] == 200){
+        showToast('操作成功');
+      }else{
+        showToast(data['msg']);
+      }
+    }
+  }
+
   Future getStorage(String key) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(key);

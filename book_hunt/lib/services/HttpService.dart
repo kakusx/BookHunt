@@ -21,12 +21,14 @@ class HttpService {
 
   //GET
   Future get(String url) async {
+//    print(DATA_SERVER + url);
     Response response = await dio.get(DATA_SERVER + url);
     return checkResult(response);
   }
 
   //POST
-  Future post(String url, Map data, {String dataKey = 'result'}) async {
+  Future post(String url, Map data) async {
+//    print(DATA_SERVER + url);
     var response = await dio.post(DATA_SERVER + url, data: data);
     return checkResult(response);
   }

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:book_hunt/services/HttpService.dart';
 import 'package:book_hunt/services/UtilService.dart';
@@ -16,36 +14,17 @@ class _LoginPageState extends State<LoginPage> {
   HttpService http = new HttpService();
   UtilService util = new UtilService();
 
-  //region initState
-  @override
-  void initState() {
-    super.initState();
-    _autoLogin();
-  }
-
-  //region 自动登录
-  _autoLogin() async{
-    String token = await util.getStorage('token');
-    if (token != null) {
-      Navigator.popAndPushNamed(context, '/bookList');
-    }
-  }
-  //endregion
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
             child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 100.0, horizontal: 24.0),
+                padding: EdgeInsets.fromLTRB(24, 75, 24, 10),
                 child: Form(
                     key: _formKey, //设置globalKey，用于后面获取FormState
                     autovalidate: true, //开启自动校验
                     child: Column(children: <Widget>[
-                      Text(
-                        '欢迎使用书寻',
-                        style: TextStyle(fontSize: 20),
-                      ),
+                      Image.asset("images/bh_logo.png", width: 200, height: 200,),
                       TextFormField(
                           autofocus: true,
                           controller: _unameController,
@@ -79,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
                                   // 通过后再提交数据。
                                   if ((_formKey.currentState as FormState).validate()) {
                                     //验证通过提交数据
-                                    var result = await http.post('login', {'user': _unameController.text, 'pwd': _pwdController.text}, dataKey: 'msg');
+                                    var result = await http.post('login', {'user': _unameController.text, 'pwd': _pwdController.text});
                                     if (result != null && result['code'] == 200) {
                                       util.showToast('登录成功');
                                       util.setStorage('token', result['msg']);

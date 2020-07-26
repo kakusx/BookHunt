@@ -1,3 +1,4 @@
+import 'package:book_hunt/pages/WelcomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:book_hunt/pages/LoginPage.dart';
 import 'package:book_hunt/pages/BookList.dart';
