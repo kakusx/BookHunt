@@ -22,7 +22,7 @@ class _WelcomePageState extends State<WelcomePage> {
     String token = await util.getStorage('token');
     Future.delayed(Duration(milliseconds: 300), () {
       if (token != null) {
-        Navigator.popAndPushNamed(context, '/bookList');
+        Navigator.popAndPushNamed(context, '/home');
       }else{
         Navigator.popAndPushNamed(context, '/login');
       }

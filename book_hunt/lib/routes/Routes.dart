@@ -1,3 +1,4 @@
+import 'package:book_hunt/pages/Tabbar.dart';
 import 'package:book_hunt/pages/WelcomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:book_hunt/pages/LoginPage.dart';
@@ -7,6 +8,7 @@ import 'package:book_hunt/pages/BookPage.dart';
 final routes = {
   '/': (context) => WelcomePage(),
   '/login': (context) => LoginPage(),
+  '/home': (context) => Tabbar(),
   '/bookList': (context) => BookListPage(),
   '/book': (context, {arguments}) => BookPage(arguments: arguments),
 };

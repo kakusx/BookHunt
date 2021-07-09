@@ -65,7 +65,8 @@ class _LoginPageState extends State<LoginPage> {
                                     if (result != null && result['code'] == 200) {
                                       util.showToast('登录成功');
                                       util.setStorage('token', result['msg']);
-                                      Navigator.pushNamedAndRemoveUntil(context, "/bookList", (route) => route == null);
+                                      Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => route == null);
+                                      // Navigator.pushNamedAndRemoveUntil(context, "/bookList", (route) => route == null);
                                     }else{
                                       util.setStorage('token', null);
                                     }
