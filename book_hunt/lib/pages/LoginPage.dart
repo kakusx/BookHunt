@@ -24,7 +24,10 @@ class _LoginPageState extends State<LoginPage> {
                     key: _formKey, //设置globalKey，用于后面获取FormState
                     autovalidate: true, //开启自动校验
                     child: Column(children: <Widget>[
-                      Image.asset("images/bh_logo.png", width: 200, height: 200,),
+                      Hero (
+                          tag: 'logo',
+                          child: Image.asset("images/bh_logo.png", width: 200, height: 200,)
+                      ),
                       TextFormField(
                           autofocus: true,
                           controller: _unameController,

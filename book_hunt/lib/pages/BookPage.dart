@@ -1,9 +1,9 @@
+import 'package:book_hunt/res/constant.dart';
+import 'package:book_hunt/services/HttpService.dart';
 import 'package:book_hunt/services/UtilService.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:book_hunt/res/constant.dart';
-import 'package:book_hunt/services/HttpService.dart';
 
 class BookPage extends StatefulWidget {
   final Map arguments;
@@ -21,9 +21,38 @@ class _BookPageState extends State<BookPage> {
 
   _BookPageState({this.book});
 
+  String token;
+  String ztTypeNames = '';
+  String ddTypeNames = '';
+
+  Future<void> getBookType() async {
+    token = await util.getStorage('token');
+    var queryUrl = 'book/type/' + book['isbn'] + "/" + token;
+    var data = await http.get(queryUrl);
+    if (data['code'] == -101) {
+      Navigator.popAndPushNamed(context, '/login');
+    }
+    var typeData = data['book_type'];
+    print(typeData);
+    setState(() {
+      ddTypeNames = typeData['dd_type_1'] + ' > ' + typeData['dd_type_2'];
+      if (typeData['dd_type_3'] != '') {
+        ddTypeNames += ' > ' + typeData['dd_type_3'];
+      }
+      var ztNames = typeData['ancestry_name'];
+      ztNames.forEach((name) {
+        ztTypeNames += (ztTypeNames.length > 0 ? ' > ' : '') + name;
+      });
+
+    });
+  }
+
   //region build
   @override
   Widget build(BuildContext context) {
+    if (ztTypeNames == '') {
+      getBookType();
+    }
     return Scaffold(
         body: CupertinoScrollbar(
             child: ListView(
@@ -52,6 +81,8 @@ class _BookPageState extends State<BookPage> {
                   ),
                   Text('价格: ' + book['price']),
                   Text('ISBN: ' + book['isbn']),
+                  Text('中图法分类: ' + ztTypeNames),
+                  Text('当当网分类: ' + ddTypeNames),
                   Text('分类号: ' + book['classno']),
                   Text('推荐分: ' + book['score'].toString()),
                 ],
@@ -61,7 +92,7 @@ class _BookPageState extends State<BookPage> {
         )),
         floatingActionButton: FloatingActionButton(
           child: Icon(
-            Icons.arrow_back_ios,
+            Icons.arrow_back_rounded,
           ),
           onPressed: () {
             Navigator.of(context).pop();

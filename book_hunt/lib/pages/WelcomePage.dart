@@ -41,7 +41,10 @@ class _WelcomePageState extends State<WelcomePage> {
             top: 150,
             width: 250,
             height: 250,
-            child: Image.asset("images/bh_logo.png"),
+            child: Hero (
+                tag: 'logo',
+                child: Image.asset("images/bh_logo.png")
+            ),
           ),
           Positioned(
             bottom: 50,
