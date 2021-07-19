@@ -22,9 +22,12 @@ class _BookItemState extends State<BookItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(0, 5, 5, 0),
+      padding: EdgeInsets.fromLTRB(5, 3, 5, 0),
       child: Container(
-          color: Colors.white,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
           padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,

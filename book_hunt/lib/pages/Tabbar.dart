@@ -16,7 +16,7 @@ class _TabbarState extends State<Tabbar> {
   int _currentIndex = 0;
 
   List _pageNames = ['找书', '发现', '收藏', '我的',];
-  List _pageList = [BookListPage(), Explore(), Favourite(), Profile()];
+  List<Widget> _pageList = [BookListPage(), Explore(), Favourite(), Profile()];
 
   double _scrollHeight = 70;
   double _opacity = 0;
@@ -34,11 +34,12 @@ class _TabbarState extends State<Tabbar> {
     return Scaffold(
       appBar: PreferredSize(
         child: AppBar(
+          backgroundColor: Colors.white,
             title: Opacity(
-              opacity: _opacity,
+              opacity: 1,
               child: Container(
-                padding: EdgeInsets.fromLTRB(0, _scrollHeight, 0, 0),
-                child: Text(_pageNames[this._currentIndex]),
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child: Text(_pageNames[this._currentIndex], style: TextStyle(color: Theme.of(context).accentColor),),
               ),
             ),
             elevation: 0,
@@ -50,11 +51,13 @@ class _TabbarState extends State<Tabbar> {
                     color: Theme.of(context).accentColor,
                   ),
                   onPressed: () {}),
-              new IconButton(icon: Icon(Icons.more_vert, color: Theme.of(context).accentColor), onPressed: () {}),
             ]),
         preferredSize: Size.fromHeight(50),
       ),
-      body: this._pageList[this._currentIndex],
+      body: IndexedStack(
+        children: _pageList,
+        index: _currentIndex,
+      ),
       bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.white,
           currentIndex: this._currentIndex,

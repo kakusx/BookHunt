@@ -43,7 +43,7 @@ class _BookListPageState extends State<BookListPage> with SingleTickerProviderSt
         body: RefreshIndicator(
             onRefresh: _refresh,
             child: Container(
-              color: Color.fromRGBO(240, 240, 240, 1),
+              color: Color.fromRGBO(247, 248, 249, 1.0),
               child: CupertinoScrollbar(
                   child: ListView.builder(
                       key: PageStorageKey('New'),
