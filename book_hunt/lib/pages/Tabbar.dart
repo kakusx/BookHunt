@@ -1,11 +1,9 @@
-import 'package:book_hunt/model/ScrollEvent.dart';
+import 'package:book_hunt/components/SearchBarDelegate.dart';
 import 'package:book_hunt/pages/BookList.dart';
 import 'package:book_hunt/pages/Explore.dart';
 import 'package:book_hunt/pages/Favourite.dart';
 import 'package:book_hunt/pages/Profile.dart';
-import 'package:book_hunt/utils/EventBusUtil.dart';
 import 'package:flutter/material.dart';
-import 'package:event_bus/event_bus.dart';
 
 class Tabbar extends StatefulWidget {
   @override
@@ -14,46 +12,23 @@ class Tabbar extends StatefulWidget {
 
 class _TabbarState extends State<Tabbar> {
   int _currentIndex = 0;
+  var accentColor;
 
   List _pageNames = ['找书', '发现', '收藏', '我的',];
   List<Widget> _pageList = [BookListPage(), Explore(), Favourite(), Profile()];
 
-  double _scrollHeight = 70;
-  double _opacity = 0;
-
-  EventBus eventBus = new EventBus();
-
-  @override
-  void initState() {
-    super.initState();
-    EventBusUtil.getInstance().on<ScrollEvent>().listen((ScrollEvent data) => onListenEvent(data));
-  }
+  List _chipSelected = [true, true, false, false];
+  List _chipBgColors = [Colors.transparent, Colors.transparent, Colors.transparent, Colors.transparent];
 
   @override
   Widget build(BuildContext context) {
+    accentColor = Theme.of(context).accentColor;
     return Scaffold(
       appBar: PreferredSize(
-        child: AppBar(
-          backgroundColor: Colors.white,
-            title: Opacity(
-              opacity: 1,
-              child: Container(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                child: Text(_pageNames[this._currentIndex], style: TextStyle(color: Theme.of(context).accentColor),),
-              ),
-            ),
-            elevation: 0,
-            brightness: Brightness.dark,
-            actions: <Widget>[
-              new IconButton(
-                  icon: Icon(
-                    Icons.search,
-                    color: Theme.of(context).accentColor,
-                  ),
-                  onPressed: () {}),
-            ]),
+        child: tabAppBar(context),
         preferredSize: Size.fromHeight(50),
       ),
+      endDrawer: endDrawer(context),
       body: IndexedStack(
         children: _pageList,
         index: _currentIndex,
@@ -67,8 +42,8 @@ class _TabbarState extends State<Tabbar> {
             });
           },
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Theme.of(context).accentColor,
-          selectedLabelStyle: TextStyle(color: Theme.of(context).accentColor),
+          selectedItemColor: accentColor,
+          selectedLabelStyle: TextStyle(color: accentColor),
           unselectedItemColor: Colors.black45,
           unselectedLabelStyle: TextStyle(color: Colors.black45),
           selectedFontSize: 12,
@@ -84,19 +59,105 @@ class _TabbarState extends State<Tabbar> {
     );
   }
 
-
-  onListenEvent(ScrollEvent data) {
-    setState(() {
-      if(data.scrollHeight <= 0){
-        _scrollHeight = 70;
-        _opacity = 0;
-      }else if(data.scrollHeight > 0 && data.scrollHeight <= 70){
-        _scrollHeight = 70 - data.scrollHeight;
-        _opacity = (data.scrollHeight + 1) / 71.0;
-      }else{
-        _scrollHeight = 0;
-        _opacity = 1;
-      }
-    });
+  //region AppBar
+  Widget tabAppBar(context){
+    return AppBar(
+        backgroundColor: Colors.white,
+        title: Opacity(
+          opacity: 1,
+          child: Container(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+            child: Text(
+              _pageNames[this._currentIndex],
+              style: TextStyle(color: accentColor),
+            ),
+          ),
+        ),
+        elevation: 0,
+        actions: <Widget>[
+          new IconButton(
+              icon: Icon(
+                Icons.search,
+                color: accentColor,
+              ),
+              onPressed: () {
+                showSearch(context: context, delegate: SearchBarDelegate());
+              }),
+          Builder(builder: (context) => IconButton(
+            icon: new Icon(Icons.filter_alt_outlined, color: accentColor),
+            onPressed: () => Scaffold.of(context).openEndDrawer(),
+          ),
+          ),
+        ]);
   }
+  //endregion
+
+  //region endDrawer
+  Widget endDrawer(context){
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          Wrap(
+              spacing: 8.0, //间隔
+              runSpacing: 20.0,//两行之间的间距
+              children: <Widget>[
+                FilterChip(
+                  label: Text("新书库"),
+                  selected: _chipSelected[0],
+                  selectedColor: Color.fromRGBO(0, 130, 255, 0.2),
+                  backgroundColor: Colors.transparent,
+                  shape: StadiumBorder(side: BorderSide(color: Colors.black26)),
+                  showCheckmark: false,
+                  onSelected: (bool value) {
+                    setState(() {
+                      _chipSelected[0] = value;
+                    });
+                  },
+                ),
+                FilterChip(
+                  label: Text("可预借"),
+                  selected: _chipSelected[1],
+                  selectedColor: Color.fromRGBO(0, 130, 255, 0.2),
+                  backgroundColor: Colors.transparent,
+                  shape: StadiumBorder(side: BorderSide(color: Colors.black26)),
+                  showCheckmark: false,
+                  onSelected: (bool value) {
+                    setState(() {
+                      _chipSelected[1] = value;
+                    });
+                  },
+                ),
+                FilterChip(
+                  label: Text("今日上架"),
+                  selected: _chipSelected[2],
+                  selectedColor: Color.fromRGBO(0, 130, 255, 0.2),
+                  backgroundColor: Colors.transparent,
+                  shape: StadiumBorder(side: BorderSide(color: Colors.black26)),
+                  showCheckmark: false,
+                  onSelected: (bool value) {
+                    setState(() {
+                      _chipSelected[2] = value;
+                    });
+                  },
+                ),
+              ]
+          ),
+          ListTile(
+            title: new Text("识花"),
+            trailing: new Icon(Icons.local_florist),
+          ),
+          ListTile(
+            title: new Text("搜索"),
+            trailing: new Icon(Icons.search),
+          ),
+          Divider(),
+          ListTile(
+            title: new Text("设置"),
+            trailing: new Icon(Icons.settings),
+          ),
+        ],
+      ),
+    );
+  }
+  //endregion
 }
