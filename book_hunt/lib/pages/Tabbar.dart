@@ -17,13 +17,13 @@ class _TabbarState extends State<Tabbar> {
   List _pageNames = ['找书', '发现', '收藏', '我的',];
   List<Widget> _pageList = [BookListPage(), Explore(), Favourite(), Profile()];
 
-  List _chipSelected = [true, true, false, false];
-  List _chipBgColors = [Colors.transparent, Colors.transparent, Colors.transparent, Colors.transparent];
+  List _chipSelected = [true, false, false, false];
 
   @override
   Widget build(BuildContext context) {
     accentColor = Theme.of(context).accentColor;
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: PreferredSize(
         child: tabAppBar(context),
         preferredSize: Size.fromHeight(50),
@@ -63,83 +63,61 @@ class _TabbarState extends State<Tabbar> {
   Widget tabAppBar(context){
     return AppBar(
         backgroundColor: Colors.white,
-        title: Opacity(
-          opacity: 1,
-          child: Container(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-            child: Text(
-              _pageNames[this._currentIndex],
-              style: TextStyle(color: accentColor),
-            ),
-          ),
+        brightness: Brightness.light,
+        title: Text(
+          _pageNames[_currentIndex],
+          style: TextStyle(color: accentColor),
         ),
         elevation: 0,
         actions: <Widget>[
-          new IconButton(
-              icon: Icon(
-                Icons.search,
-                color: accentColor,
-              ),
-              onPressed: () {
-                showSearch(context: context, delegate: SearchBarDelegate());
-              }),
-          Builder(builder: (context) => IconButton(
+          _currentIndex==0 ? IconButton(
+              icon: Icon(Icons.search, color: accentColor,),
+              onPressed: () => showSearch(context: context, delegate: SearchBarDelegate())
+              ): Container(),
+          Builder(builder: (context) => _currentIndex==0?IconButton(
             icon: new Icon(Icons.filter_alt_outlined, color: accentColor),
             onPressed: () => Scaffold.of(context).openEndDrawer(),
-          ),
+          ):Container(),
           ),
         ]);
   }
   //endregion
 
+  Widget drawerFilterChip(name, index){
+    return FilterChip(
+      label: Text(name),
+      labelStyle: TextStyle(
+          color: _chipSelected[index]
+              ? accentColor
+              : Colors.black26),
+      selected: _chipSelected[index],
+      selectedColor: Color.fromRGBO(0, 130, 255, 0.2),
+      backgroundColor: Colors.transparent,
+      shape: StadiumBorder(side: BorderSide(color: _chipSelected[index]?accentColor:Colors.black12)),
+      showCheckmark: false,
+      onSelected: (bool value) {
+        setState(() {
+          _chipSelected[index] = value;
+        });
+      },
+    );
+  }
+
   //region endDrawer
   Widget endDrawer(context){
     return Drawer(
       child: ListView(
+        padding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 10.0),
         children: <Widget>[
+          ListTile(title: new Text("筛选"), contentPadding: EdgeInsets.fromLTRB(15, 0, 10, 0), dense: true,),
+          Divider(),
           Wrap(
               spacing: 8.0, //间隔
-              runSpacing: 20.0,//两行之间的间距
+              runSpacing: 10.0,//两行之间的间距
               children: <Widget>[
-                FilterChip(
-                  label: Text("新书库"),
-                  selected: _chipSelected[0],
-                  selectedColor: Color.fromRGBO(0, 130, 255, 0.2),
-                  backgroundColor: Colors.transparent,
-                  shape: StadiumBorder(side: BorderSide(color: Colors.black26)),
-                  showCheckmark: false,
-                  onSelected: (bool value) {
-                    setState(() {
-                      _chipSelected[0] = value;
-                    });
-                  },
-                ),
-                FilterChip(
-                  label: Text("可预借"),
-                  selected: _chipSelected[1],
-                  selectedColor: Color.fromRGBO(0, 130, 255, 0.2),
-                  backgroundColor: Colors.transparent,
-                  shape: StadiumBorder(side: BorderSide(color: Colors.black26)),
-                  showCheckmark: false,
-                  onSelected: (bool value) {
-                    setState(() {
-                      _chipSelected[1] = value;
-                    });
-                  },
-                ),
-                FilterChip(
-                  label: Text("今日上架"),
-                  selected: _chipSelected[2],
-                  selectedColor: Color.fromRGBO(0, 130, 255, 0.2),
-                  backgroundColor: Colors.transparent,
-                  shape: StadiumBorder(side: BorderSide(color: Colors.black26)),
-                  showCheckmark: false,
-                  onSelected: (bool value) {
-                    setState(() {
-                      _chipSelected[2] = value;
-                    });
-                  },
-                ),
+                drawerFilterChip('可预借', 0),
+                drawerFilterChip('新书', 1),
+                drawerFilterChip('今日上架', 2),
               ]
           ),
           ListTile(
@@ -155,6 +133,11 @@ class _TabbarState extends State<Tabbar> {
             title: new Text("设置"),
             trailing: new Icon(Icons.settings),
           ),
+          OutlinedButton(child: const Text('确认'),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(width: 1, color: accentColor),
+              ),
+              onPressed: () => Navigator.pop(context))
         ],
       ),
     );
