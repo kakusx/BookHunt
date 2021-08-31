@@ -17,6 +17,7 @@ class _FavouriteState extends State<Favourite> {
   UtilService util = new UtilService();
   List<Widget> _bookList = [];
   int _pageId = 1;
+  bool _loading = false;
 
   ScrollController _controller = ScrollController(initialScrollOffset: 0);
 
@@ -34,7 +35,9 @@ class _FavouriteState extends State<Favourite> {
       scrollHeight = _controller.position.pixels;
       EventBusUtil.getInstance().fire(ScrollEvent(scrollHeight));
       if (_controller.position.pixels == _controller.position.maxScrollExtent) {
-        _pageId++;
+        if (!this._loading) {
+          _pageId++;
+        }
         _refresh(clear: false);
       }
     });
@@ -69,6 +72,12 @@ class _FavouriteState extends State<Favourite> {
   }
 
   Future<void> _refresh({bool clear: true}) async {
+    if (this._loading) {
+      return;
+    }
+
+    _loading = true;
+
     token = await util.getStorage('token');
     if (clear) {
       _pageId = 1;
@@ -82,15 +91,19 @@ class _FavouriteState extends State<Favourite> {
 
     if (!mounted) return;
     if (data != null && data['list'].length > 0) {
+      List<BookItem> responseList = [];
+
+      data['list'].forEach((o) {
+        o['tabName'] = "[<'Favourite'>]";
+        responseList.add(new BookItem(data: o, key: Key(o['isbn'])));
+      });
       setState(() {
         if (clear) {
           _bookList.clear();
         }
-        data['list'].forEach((o) {
-          o['tabName'] = "[<'Favourite'>]";
-          _bookList.add(new BookItem(data: o, key: Key(o['isbn'])));
-        });
+        _bookList.addAll(responseList);
       });
     }
+    _loading = false;
   }
 }
